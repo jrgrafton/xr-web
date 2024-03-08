@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic WebXR Example</title>
+</head>
+<body>
+    <button id="vrButton">Enter VR</button>
+    <script>
+        document.getElementById('vrButton').addEventListener('click', onButtonClick);
+
+        async function onButtonClick() {
+            // Check if WebXR is supported
+            if (navigator.xr) {
+                // Try to enter XR immersive mode
+                try {
+                    const xrSession = await navigator.xr.requestSession('immersive-vr', {
+                        optionalFeatures: ['local-floor', 'bounded-floor']
+                    });
+
+                    xrSession.addEventListener('end', onSessionEnded);
+
+                    // You need to create a WebGL context that is compatible with WebXR
+                    const gl = createWebGLContext({ xrCompatible: true });
+                    xrSession.updateRenderState({
+                        baseLayer: new XRWebGLLayer(xrSession, gl)
+                    });
+
+                    // Start rendering the scene
+                    renderScene(xrSession, gl);
+                } catch (e) {
+                    console.error('Could not enter XR session:', e);
+                }
+            } else {
+                console.warn('WebXR not available.');
+            }
+        }
+
+        function onSessionEnded(event) {
+            const session = event.session;
+            session.end();
+            console.log('Session ended');
+        }
+
+        function createWebGLContext(options) {
+            // Placeholder: Create and return your WebGL context here
+            // Example: const canvas = document.createElement('canvas');
+            //          return canvas.getContext('webgl2', options);
+        }
+
+        function renderScene(xrSession, gl) {
+            // Placeholder: Set up your 3D scene, load models, and start rendering frames
+            // You'll need to handle the animation loop using xrSession.requestAnimationFrame
+        }
+    </script>
+    <a href="webxr.html">Index</a>
+</body>
+</html>
